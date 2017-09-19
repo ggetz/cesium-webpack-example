@@ -2,36 +2,70 @@
 
 The minimal recommended setup for an application using [Cesium](https://cesiumjs.org/) with [Webpack](https://webpack.js.org/concepts/).
 
-## Running this app
+### Running this app
 
-```
-npm install
-npm start
-```
+	npm install
+	npm start
 
-## Creating an app
+### Creating an app
 
-Setup 
-```
-npm init -y
-```
+Initialize an app
+
+	npm init -y
 
 Install cesium and webpack
-```
-npm install --save-dev cesium webpack webpack-dev-server
-```
 
-Install webpack plugins
-```
-npm install --save-dev html-webpack-plugin
-```
+	npm install --save-dev cesium webpack webpack-dev-server
 
 Install webpack loaders
-```
-npm install --save-dev style-loader css-loader file-loader worker-loader
-```
 
-### Configuration 
+	npm install --save-dev style-loader css-loader file-loader worker-loader
+
+Install webpack plugins
+
+	npm install --save-dev html-webpack-plugin
+
+### Analyze Bundle & Ignore unused
+
+To reduce the total size of your bundle you can visualize it with the [`webpack-bundle-analyzer`](https://www.npmjs.com/package/webpack-bundle-analyzer) plugin and ignore unused code using the `IgnorePlugin`.
+
+#### Analyze Bundle
+
+Install [`webpack-bundle-analyzer`](https://www.npmjs.com/package/webpack-bundle-analyzer) and add it to your `package.json`.
+
+	npm install --save-dev webpack-bundle-analyzer
+
+Include the plugin in your `webpack.config.js`.
+
+	var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+Add the plugin to the `plugins` list.
+
+	plugins: [
+	    ...,
+		new BundleAnalyzerPlugin()
+	],
+
+#### Ignore
+
+Don't include parts of Cesium by default by using `IgnorePlugin`.
+
+	npm install --save-dev webpack-ignore-plugin
+
+For example, if you are not using default Assets, ignore them:
+
+	plugins: [
+		...,
+
+	    // Ignore default Cesium Assets
+	    new webpack.IgnorePlugin(/^\.\/Assets$/, /cesium$/),
+  	],
+
+You can still include them in your project explicitly:
+
+	require('cesium/Assets/');
+
+### Additional Configuration 
 
 #### For Development
 
@@ -41,8 +75,51 @@ Targeting fast rebuilds and easier debugging.
 
 #### For Production
 
-Targeting performance.
+In order to improve performance for production, you can additionally configure the following settings.
 
 ##### Removing pragmas
 
-##### Minify and Uglify
+To remove pragmas like a traditional cesium [combine build]() use the `webpack-strip-block` plugin.
+
+	rules: [
+	    {
+	      test: /\.js$/,
+	      enforce: 'pre',
+	      exclude: /(node_modules|bower_components|\.spec\.js)/,
+	      use: [
+	        {
+	          loader: 'webpack-strip-block',
+	          options: {
+	            start: '>>includeStart(\'debug\', pragmas.debug);',
+	            end: '>>includeEnd(\'debug\')'
+	        }
+	      ]
+	    }
+
+##### Uglify and Minify
+
+Compress the final size of the bundle by minifying included JavaScript using UglifyJS.
+
+	plugins: [
+		...,
+    	new webpack.optimize.UglifyJsPlugin()
+	]
+
+Additionally, minify the CSS files when loaded with the `css-loader`
+
+	module: {
+		rules: [
+		{
+			test: /\.css$/,
+			use: [ 
+				'style-loader', 
+				{
+					loader: 'css-loader',
+					options: {
+						minimize: true
+					}
+				}
+			]
+		}, ...
+	
+
