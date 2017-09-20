@@ -67,15 +67,7 @@ You can still include them in your project explicitly:
 
 ### Additional Configuration 
 
-#### For Development
-
-Targeting fast rebuilds and easier debugging.
-
 ##### Source Maps
-
-#### For Production
-
-In order to improve performance for production, you can additionally configure the following settings.
 
 ##### Removing pragmas
 
@@ -85,7 +77,7 @@ To remove pragmas like a traditional cesium [combine build]() use the `webpack-s
 	    {
 	      test: /\.js$/,
 	      enforce: 'pre',
-	      exclude: /(node_modules|bower_components|\.spec\.js)/,
+	      include: cesiumSource,
 	      use: [
 	        {
 	          loader: 'webpack-strip-block',

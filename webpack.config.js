@@ -1,22 +1,23 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
 	context: __dirname,
-	entry: [
-		'./src/index.js'
-	],
+	entry: {
+		app: './src/index.js'
+	},
 	output: {
-		filename: 'app.bundle.js',
+		filename: '[name].js',
+		chunkFilename : '[name].js',
 		path: path.resolve(__dirname, 'dist'),
-		sourcePrefix: '', // Needed by Cesium for multiline strings
-		libraryTarget: 'umd'
+		sourcePrefix: '' // Needed by Cesium for multiline strings
 	},
 	resolve: {
 		alias: {
 			cesium: path.resolve(__dirname, '../cesium/Source'),
-			Workers: path.resolve(__dirname, '../cesium/Build/Cesium/Workers')
+			Workers: path.resolve(__dirname, '../cesium/Source/Workers')
 		},
 		modules: [ 'node_modules' ]
 	},
@@ -29,15 +30,10 @@ module.exports = {
 			test: /\.(png|gif|jpg|jpeg|svg|xml|json)$/,
             use: [ 'file-loader' ]
 		}, {
-			test: /\.glsl$/,
-            loader: 'webpack-glsl-loader'
-		}, {
-			test: /Workers\/*\.js$/,
-	        exclude: [
-	          //path.resolve(__dirname, "../cesium/Source/Workers/cesiumWorkerBootstrapper.js"),
-	          //path.resolve(__dirname, "../cesium/Source/Workers/transferTypedArrayTest.js"),
-	          //path.resolve(__dirname, "../cesium/Source/Workers/createTaskProcessorWorker.js")
-	        ],
+			include: [
+				path.resolve(__dirname, "../cesium/Source/Workers/cesiumWorkerBootstrapper.js"),
+				path.resolve(__dirname, "../cesium/Source/Workers/transferTypedArrayTest.js")
+			],
 			use: [ 'worker-loader' ]
 		}
 		]
@@ -46,6 +42,9 @@ module.exports = {
 	    new HtmlWebpackPlugin({
 	        template: 'dist/index.html'
     	}),
+    	new webpack.optimize.CommonsChunkPlugin({
+    		name: 'common'
+    	})
     	//new BundleAnalyzerPlugin()
 	],
 
