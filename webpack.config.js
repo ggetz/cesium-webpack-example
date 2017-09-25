@@ -3,6 +3,8 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
+var cesiumSource = path.resolve(__dirname, '../cesium/Source');
+
 module.exports = {
 	context: __dirname,
 	entry: {
@@ -16,8 +18,8 @@ module.exports = {
 	},
 	resolve: {
 		alias: {
-			cesium: path.resolve(__dirname, '../cesium/Source'),
-			Workers: path.resolve(__dirname, '../cesium/Source/Workers')
+			cesium: cesiumSource,
+			Workers: path.resolve(cesiumSource, '/Workers')
 		},
 		modules: [ 'node_modules' ]
 	},
@@ -31,8 +33,8 @@ module.exports = {
             use: [ 'file-loader' ]
 		}, {
 			include: [
-				path.resolve(__dirname, "../cesium/Source/Workers/cesiumWorkerBootstrapper.js"),
-				path.resolve(__dirname, "../cesium/Source/Workers/transferTypedArrayTest.js")
+				path.resolve(cesiumSource, "/Workers/cesiumWorkerBootstrapper.js"),
+				path.resolve(cesiumSource, "/Workers/transferTypedArrayTest.js")
 			],
 			use: [ 'worker-loader' ]
 		}
@@ -41,9 +43,6 @@ module.exports = {
 	plugins: [
 	    new HtmlWebpackPlugin({
 	        template: 'dist/index.html'
-    	}),
-    	new webpack.optimize.CommonsChunkPlugin({
-    		name: 'common'
     	})
     	//new BundleAnalyzerPlugin()
 	],

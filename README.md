@@ -53,11 +53,21 @@ The minimal recommended setup for an application using [Cesium](https://cesiumjs
 
     webpack-dev-server --config webpack.config.js --open
 
-### Analyze Bundle & Ignore unused
+### Use another cesium
+
+We set the cesium Source to be the code included with the cesium npm module.
+
+	var cesiumSource = path.resolve(__dirname, '/node_modules/cesium/Source');
+
+However, you may want to use a different version of cesium, like if you've cloned the cesium source code directly. Just set the cesium location to the appropriate path.
+
+	var cesiumSource = path.resolve(__dirname, '../path/to/cesium/Source');
+
+### Analyze bundle and ignore unused modules
 
 To look at the contents of your bundle, you can visualize it with the [`webpack-bundle-analyzer`](https://www.npmjs.com/package/webpack-bundle-analyzer) plugin and ignore unused code using the [`IgnorePlugin`](https://webpack.js.org/plugins/ignore-plugin/).
 
-#### Analyze Bundle
+#### Analyze bundle
 
 Install [`webpack-bundle-analyzer`](https://www.npmjs.com/package/webpack-bundle-analyzer) and add it to your `package.json`.
 
@@ -70,7 +80,6 @@ Include the plugin in your `webpack.config.js`.
 Add the plugin to the `plugins` list.
 
 	plugins: [
-	    ...,
 		new BundleAnalyzerPlugin()
 	],
 
@@ -81,8 +90,6 @@ Since Cesium is such a large library, it's recommended to ignore unused parts of
 For example, if you are not using default Assets, prevent them from being included in the bundle:
 
 	plugins: [
-		...,
-
 	    // Ignore default Cesium Assets
 	    new webpack.IgnorePlugin(/^\.\/Assets$/, /cesium$/),
   	],
@@ -95,7 +102,7 @@ You can still include ignored files in your app explicitly:
 
 ##### Removing pragmas
 
-To remove pragmas like a traditional cesium release build use the `webpack-strip-block` plugin.
+To remove pragmas like a traditional cesium release build, use the `webpack-strip-block` plugin.
 
 	rules: [
 	    {
@@ -117,8 +124,7 @@ To remove pragmas like a traditional cesium release build use the `webpack-strip
 Compress the final size of the bundle by minifying included JavaScript using UglifyJS.
 
 	plugins: [
-		...,
-    	new webpack.optimize.UglifyJsPlugin()
+		new webpack.optimize.UglifyJsPlugin()
 	]
 
 Additionally, minify the CSS files when loaded with the `css-loader`
