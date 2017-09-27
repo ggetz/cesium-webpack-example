@@ -1,11 +1,10 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+let CircularDependencyPlugin = require('circular-dependency-plugin')
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-var cesiumSource = path.resolve(__dirname, '../cesium/Source');
-
-module.exports = {
+module.exports = [{
 	context: __dirname,
 	entry: {
 		app: './src/index.js'
@@ -18,10 +17,13 @@ module.exports = {
 	},
 	resolve: {
 		alias: {
-			cesium: cesiumSource,
-			Workers: path.resolve(cesiumSource, '/Workers')
+			cesium: path.resolve(__dirname, '../cesium/Source'),
+			Workers: path.resolve(__dirname, '../cesium/Source/Workers'),
+			distWorkers: path.resolve(__dirname, './dist')
 		},
-		modules: [ 'node_modules' ]
+		modules: [ 
+			'node_modules'
+		]
 	},
 	module: {
 		rules: [
@@ -33,8 +35,8 @@ module.exports = {
             use: [ 'file-loader' ]
 		}, {
 			include: [
-				path.resolve(cesiumSource, "/Workers/cesiumWorkerBootstrapper.js"),
-				path.resolve(cesiumSource, "/Workers/transferTypedArrayTest.js")
+				path.resolve(__dirname, "./dist/cesiumWorkerBootstrapper.js"),
+				path.resolve(__dirname, "./dist/transferTypedArrayTest.js")
 			],
 			use: [ 'worker-loader' ]
 		}
@@ -43,7 +45,13 @@ module.exports = {
 	plugins: [
 	    new HtmlWebpackPlugin({
 	        template: 'dist/index.html'
-    	})
+    	}),
+    	new CircularDependencyPlugin(),
+    	// new webpack.optimize.CommonsChunkPlugin({
+    	// 	name: 'common',
+    	// 	filename: 'common.js',
+    	// 	children: true
+    	// }),
     	//new BundleAnalyzerPlugin()
 	],
 
@@ -57,4 +65,4 @@ module.exports = {
 	node: {
        fs: "empty"
     }
-};
+}];
