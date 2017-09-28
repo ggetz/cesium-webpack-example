@@ -2,10 +2,9 @@ const path = require('path');
 const fs = require('fs');
 
 const webpack = require('webpack');
-let CircularDependencyPlugin = require('circular-dependency-plugin')
 
-var cesiumSource = '../cesium/Source';
-var thirdPartyWorkers = 'ThirdParty/Workers/';
+const cesiumSource = '../cesium/Source';
+const thirdPartyWorkers = 'ThirdParty/Workers/';
 
 var workerFiles = {
 	'cesiumWorkerBootstrapper': path.resolve(cesiumSource, 'Workers/cesiumWorkerBootstrapper.js'),
@@ -16,7 +15,7 @@ fs.readdirSync(path.resolve(__dirname, cesiumSource, thirdPartyWorkers))
 		workerFiles[path.basename(file, '.js')] = path.resolve(cesiumSource, thirdPartyWorkers, file);
 	});
 
-module.exports = [{
+module.exports = {
 	context: __dirname,
 	entry: workerFiles,
 	target: 'webworker',
@@ -28,24 +27,13 @@ module.exports = [{
 	},
 	resolve: {
 		alias: {
-			//Workers: path.resolve(__dirname, cesiumSource, '/Workers'),
+			Workers: path.resolve(__dirname, '../cesium/Source/Workers')
 		}
-	},
-	module: {
-		rules: [
-		{
-			test: /\.css$/,
-			use: [ 'style-loader', 'css-loader' ]
-		}, {
-			test: /\.(png|gif|jpg|jpeg|svg|xml|json)$/,
-            use: [ 'file-loader' ]
-		}
-		]
 	},
 	plugins: [
-		//new CircularDependencyPlugin()
-	],
+	    new webpack.IgnorePlugin(/(Assets|Widgets)/),
+  	],
 	node: {
        fs: "empty"
     }
-}];
+};

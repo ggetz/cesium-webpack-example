@@ -1,8 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-let CircularDependencyPlugin = require('circular-dependency-plugin')
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+const workerConfig = require('./workers.webpack.config');
 
 module.exports = [{
 	context: __dirname,
@@ -18,8 +19,7 @@ module.exports = [{
 	resolve: {
 		alias: {
 			cesium: path.resolve(__dirname, '../cesium/Source'),
-			Workers: path.resolve(__dirname, '../cesium/Source/Workers'),
-			distWorkers: path.resolve(__dirname, './dist')
+			Workers: path.resolve(__dirname, './dist'),
 		},
 		modules: [ 
 			'node_modules'
@@ -34,9 +34,9 @@ module.exports = [{
 			test: /\.(png|gif|jpg|jpeg|svg|xml|json)$/,
             use: [ 'file-loader' ]
 		}, {
+			test: /\.js$/,
 			include: [
-				path.resolve(__dirname, "./dist/cesiumWorkerBootstrapper.js"),
-				path.resolve(__dirname, "./dist/transferTypedArrayTest.js")
+				path.resolve(__dirname, "./dist")
 			],
 			use: [ 'worker-loader' ]
 		}
@@ -44,17 +44,9 @@ module.exports = [{
 	},
 	plugins: [
 	    new HtmlWebpackPlugin({
-	        template: 'dist/index.html'
-    	}),
-    	new CircularDependencyPlugin(),
-    	// new webpack.optimize.CommonsChunkPlugin({
-    	// 	name: 'common',
-    	// 	filename: 'common.js',
-    	// 	children: true
-    	// }),
-    	//new BundleAnalyzerPlugin()
-	],
-
+	        template: 'public/index.html'
+    	})
+    ],
 	// development server options
 	devServer: {
 		contentBase: './dist'
