@@ -32,6 +32,7 @@ module.exports = {
 	},
 	plugins: [
 	    new webpack.IgnorePlugin(/(Assets|Widgets)/),
+	    new webpack.optimize.UglifyJsPlugin()
   	],
 	node: {
        fs: "empty"

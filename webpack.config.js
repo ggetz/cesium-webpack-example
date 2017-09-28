@@ -3,8 +3,6 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-const workerConfig = require('./workers.webpack.config');
-
 module.exports = [{
 	context: __dirname,
 	entry: {
@@ -31,7 +29,7 @@ module.exports = [{
 			test: /\.css$/,
 			use: [ 'style-loader', 'css-loader' ]
 		}, {
-			test: /\.(png|gif|jpg|jpeg|svg|xml|json)$/,
+			test: /\.(png|gif|jpg|jpeg|svg|xml|json|ico)$/,
             use: [ 'file-loader' ]
 		}, {
 			test: /\.js$/,
