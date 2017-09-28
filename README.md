@@ -10,21 +10,21 @@ The minimal recommended setup for an application using [Cesium](https://cesiumjs
 
 ### Requiring Cesium in your application
  
-#### CommonJS Require
+##### CommonJS Require
 
  	var Cesium = require('cesium/Cesium');
  	var viewer = new Cesium.Viewer('cesiumContainer');
 
-#### ES6 Style Import
+##### ES6 Style Import
 
  	import Cesium from 'cesium/Cesium';
  	var viewer = new Cesium.Viewer('cesiumContainer');
  
-#### Require asset files
+##### Require asset files
 
  	require('cesium/Widgets/widgets.css');
 
-#### Require specific modules
+##### Require specific modules
 
 	var Color = require('cesium/Core/Color');
 	var white = new Color.WHITE;
@@ -39,7 +39,11 @@ However, you may want to use a different version of cesium, like if you've clone
 
 	var cesiumSource = path.resolve(__dirname, '../path/to/cesium/Source');
 
-### Ignore
+### Optional Performance Configurations 
+
+The following optimizations are recommended for building for production and will increase performance and result in smaller bundle sizes.
+
+##### Ignore
 
 Since Cesium is such a large library, it's recommended to ignore unused parts of the Cesium library by default by using the [`IgnorePlugin`](https://webpack.js.org/plugins/ignore-plugin/) included with Webpack.
 
@@ -47,65 +51,61 @@ For example, if you are not using default Assets, prevent them from being includ
 
 	plugins: [
 	    // Ignore default Cesium Assets
-	    new webpack.IgnorePlugin(/^\.\/Assets$/, /cesium$/),
+	    new webpack.IgnorePlugin(/Assets/, /cesium$/),
   	],
 
 You can still include ignored files in your app explicitly:
 
 	require('cesium/Source/Assets/approximateTerrainHeights.json');
 
-### Optional Configurations 
-
-The following optimizations are recommended for building for production and will increase performance and result in smaller bundle sizes.
-
 ##### Removing pragmas
 
-To remove pragmas like a traditional cesium release build, use the `webpack-strip-block` plugin.
+To remove pragmas like a traditional cesium release build, use the [`webpack-strip-block`](https://www.npmjs.com/package/webpack-strip-block) plugin.
 
 ```
-	rules: [
-	    {
-	      test: /\.js$/,
-	      enforce: 'pre',
-	      include: cesiumSource,
-	      use: [
-	        {
-	          loader: 'webpack-strip-block',
-	          options: {
-	            start: '>>includeStart(\'debug\', pragmas.debug);',
-	            end: '>>includeEnd(\'debug\')'
-	        }
-	      ]
-	    }
-    ]
+rules: [
+    {
+      test: /\.js$/,
+      enforce: 'pre',
+      include: cesiumSource,
+      use: [
+        {
+          loader: 'webpack-strip-block',
+          options: {
+            start: '>>includeStart(\'debug\', pragmas.debug);',
+            end: '>>includeEnd(\'debug\')'
+        }
+      ]
+    }
+]
 ```
 
 ##### Uglify and Minify
 
-Compress the final size of the bundle by minifying included JavaScript using UglifyJS.
+Compress the final size of the bundle by minifying included JavaScript using UglifyJS with the [`uglifyjs-webpack-plugin`](https://webpack.js.org/plugins/uglifyjs-webpack-plugin/) included with webpack.
 
 ```
-	plugins: [
-		new webpack.optimize.UglifyJsPlugin()
-	]
+plugins: [
+	new webpack.optimize.UglifyJsPlugin()
+]
 ```
 
 Additionally, minify the CSS files when loaded with the `css-loader`
 
 ```
-	module: {
-		rules: [
-		{
-			test: /\.css$/,
-			use: [ 
-				'style-loader', 
-				{
-					loader: 'css-loader',
-					options: {
-						minimize: true
-					}
+module: {
+	rules: [
+	{
+		test: /\.css$/,
+		use: [ 
+			'style-loader', 
+			{
+				loader: 'css-loader',
+				options: {
+					minimize: true
 				}
-			]
-		},
-	}
+			}
+		]
+	},
+}
 ```
