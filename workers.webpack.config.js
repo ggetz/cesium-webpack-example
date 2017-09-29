@@ -27,9 +27,23 @@ module.exports = {
 	},
 	resolve: {
 		alias: {
-			Workers: path.resolve(__dirname, '../cesium/Source/Workers')
+			Workers: path.resolve(__dirname, cesiumSource, 'Workers')
 		}
 	},
+	// module: {
+	// 	rules: [{
+	// 		test: /\.js$/,
+	// 		enforce: 'pre',
+	// 		include: path.resolve(__dirname, cesiumSource),
+	// 		use: [{
+	// 			loader: 'webpack-strip-block',
+	// 			options: {
+	// 				start: '>>includeStart(\'debug\', pragmas.debug);',
+	// 				end: '>>includeEnd(\'debug\')'
+	// 			}
+	// 		}]
+	//     }]
+	// },
 	plugins: [
 	    new webpack.IgnorePlugin(/(Assets|Widgets)/),
 	    new webpack.optimize.UglifyJsPlugin()

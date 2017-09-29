@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = [{
@@ -24,26 +25,19 @@ module.exports = [{
 		]
 	},
 	module: {
-		rules: [
-		{
+		rules: [{
 			test: /\.css$/,
 			use: [ 'style-loader', 'css-loader' ]
 		}, {
 			test: /\.(png|gif|jpg|jpeg|svg|xml|json|ico)$/,
             use: [ 'file-loader' ]
-		}, {
-			test: /\.js$/,
-			include: [
-				path.resolve(__dirname, "./dist")
-			],
-			use: [ 'worker-loader' ]
-		}
-		]
+		}]
 	},
 	plugins: [
 	    new HtmlWebpackPlugin({
 	        template: 'public/index.html'
-    	})
+    	}),
+    	new CopyWebpackPlugin([ { from: 'dist', to: 'Workers' } ])
     ],
 	// development server options
 	devServer: {
