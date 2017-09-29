@@ -20,24 +20,26 @@ The minimal recommended setup for an application using [Cesium](https://cesiumjs
  	import Cesium from 'cesium/Cesium';
  	var viewer = new Cesium.Viewer('cesiumContainer');
  
-##### Require asset files
+##### Require Cesium asset files
 
  	require('cesium/Widgets/widgets.css');
 
-##### Require specific modules
+##### Require specific modules from Cesium
 
 	var Color = require('cesium/Core/Color');
 	var white = new Color.WHITE;
 
 ### Using another Cesium location
 
-We set the cesium Source to be the code included with the cesium npm module.
+We've set the cesium Source location to be what's included with the cesium npm module.
 
-	var cesiumSource = path.resolve(__dirname, './node_modules/cesium/Source');
+	var cesiumSource = path.resolve(__dirname, 'node_modules/cesium/Source');
 
 However, you may want to use a different version of cesium, like if you've cloned the cesium source code directly. Just set the cesium location to the appropriate path.
 
 	var cesiumSource = path.resolve(__dirname, '../path/to/cesium/Source');
+
+You could even point the cesium to a branch in github or another url in your `package.json` file.
 
 ### Optional Performance Configurations 
 
@@ -45,7 +47,7 @@ The following optimizations are recommended for building for production and will
 
 ##### Ignore
 
-Since Cesium is such a large library, it's recommended to ignore unused parts of the Cesium library by default by using the [`IgnorePlugin`](https://webpack.js.org/plugins/ignore-plugin/) included with Webpack.
+Since Cesium is such a large library, it's recommended to ignore unused parts of the Cesium library by using the [`IgnorePlugin`](https://webpack.js.org/plugins/ignore-plugin/) included with Webpack.
 
 For example, if you are not using default Assets, prevent them from being included in the bundle:
 
@@ -54,7 +56,7 @@ For example, if you are not using default Assets, prevent them from being includ
 	    new webpack.IgnorePlugin(/Assets/, /cesium$/),
   	],
 
-You can still include ignored files in your app explicitly:
+You can still include ignored files in your app by requiring them explicitly:
 
 	require('cesium/Source/Assets/approximateTerrainHeights.json');
 
@@ -63,26 +65,23 @@ You can still include ignored files in your app explicitly:
 To remove pragmas like a traditional cesium release build, use the [`webpack-strip-block`](https://www.npmjs.com/package/webpack-strip-block) plugin.
 
 ```
-rules: [
-    {
-      test: /\.js$/,
-      enforce: 'pre',
-      include: cesiumSource,
-      use: [
-        {
-          loader: 'webpack-strip-block',
-          options: {
-            start: '>>includeStart(\'debug\', pragmas.debug);',
-            end: '>>includeEnd(\'debug\')'
-        }
-      ]
-    }
-]
+rules: [{
+	test: /\.js$/,
+	enforce: 'pre',
+	include: cesiumSource,
+	use: [{
+		loader: 'webpack-strip-block',
+		options: {
+		    start: '>>includeStart(\'debug\', pragmas.debug);',
+		    end: '>>includeEnd(\'debug\')'
+		}
+	}]
+}]
 ```
 
 ##### Uglify and Minify
 
-Compress the final size of the bundle by minifying included JavaScript using UglifyJS with the [`uglifyjs-webpack-plugin`](https://webpack.js.org/plugins/uglifyjs-webpack-plugin/) included with webpack.
+Compress the final size of the bundle by minifying included JavaScript using UglifyJS with the [`uglifyjs-webpack-plugin`](https://webpack.js.org/plugins/uglifyjs-webpack-plugin/) included with Webpack.
 
 ```
 plugins: [

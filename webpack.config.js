@@ -1,8 +1,12 @@
 const path = require('path');
+
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+//var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+// The path to the ceisum source code
+const cesiumSource = '../cesium/Source'; 
 
 module.exports = [{
 	context: __dirname,
@@ -17,27 +21,31 @@ module.exports = [{
 	},
 	resolve: {
 		alias: {
-			cesium: path.resolve(__dirname, '../cesium/Source'),
-			Workers: path.resolve(__dirname, './dist'),
-		},
-		modules: [ 
-			'node_modules'
-		]
+			cesium: path.resolve(__dirname, cesiumSource)
+		}
+	},
+	amd: {
+		toUrlUndefined: true
 	},
 	module: {
 		rules: [{
 			test: /\.css$/,
 			use: [ 'style-loader', 'css-loader' ]
 		}, {
-			test: /\.(png|gif|jpg|jpeg|svg|xml|json|ico)$/,
+			test: /\.(png|gif|jpg|jpeg|svg|xml|json)$/,
             use: [ 'file-loader' ]
 		}]
 	},
 	plugins: [
 	    new HtmlWebpackPlugin({
-	        template: 'public/index.html'
+	        template: 'src/index.html'
     	}),
-    	new CopyWebpackPlugin([ { from: 'dist', to: 'Workers' } ])
+    	new webpack.DefinePlugin({
+  			CESIUM_BASE_URL: JSON.stringify('')
+		}),
+    	new CopyWebpackPlugin([ { from: 'dist', to: 'Workers' } ]),
+    	new CopyWebpackPlugin([ { from: path.join(cesiumSource, 'Assets'), to: 'Assets' } ]),
+    	new CopyWebpackPlugin([ { from: path.join(cesiumSource, 'Widgets'), to: 'Widgets' } ])
     ],
 	// development server options
 	devServer: {

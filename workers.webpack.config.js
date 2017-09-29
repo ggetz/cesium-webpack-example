@@ -3,6 +3,7 @@ const fs = require('fs');
 
 const webpack = require('webpack');
 
+// The path to the cesium source code
 const cesiumSource = '../cesium/Source';
 const thirdPartyWorkers = 'ThirdParty/Workers/';
 
@@ -30,21 +31,10 @@ module.exports = {
 			Workers: path.resolve(__dirname, cesiumSource, 'Workers')
 		}
 	},
-	// module: {
-	// 	rules: [{
-	// 		test: /\.js$/,
-	// 		enforce: 'pre',
-	// 		include: path.resolve(__dirname, cesiumSource),
-	// 		use: [{
-	// 			loader: 'webpack-strip-block',
-	// 			options: {
-	// 				start: '>>includeStart(\'debug\', pragmas.debug);',
-	// 				end: '>>includeEnd(\'debug\')'
-	// 			}
-	// 		}]
-	//     }]
-	// },
 	plugins: [
+		new webpack.DefinePlugin({
+  			CESIUM_BASE_URL: JSON.stringify('')
+		}),
 	    new webpack.IgnorePlugin(/(Assets|Widgets)/),
 	    new webpack.optimize.UglifyJsPlugin()
   	],

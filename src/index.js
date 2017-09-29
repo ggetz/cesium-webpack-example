@@ -1,4 +1,6 @@
 require('cesium/Widgets/widgets.css');
+require('./css/main.css');
+
 import Cesium from 'cesium/Cesium';
 
 // Example app
