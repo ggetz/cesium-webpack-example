@@ -6,7 +6,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 //var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 // The path to the ceisum source code
-const cesiumSource = '../cesium/Source'; 
+const cesiumSource = '../cesium/Source';
+const cesiumWorkers = '../Build/Cesium/Workers';
 
 module.exports = [{
 	context: __dirname,
@@ -43,7 +44,7 @@ module.exports = [{
     	new webpack.DefinePlugin({
   			CESIUM_BASE_URL: JSON.stringify('')
 		}),
-    	new CopyWebpackPlugin([ { from: 'dist', to: 'Workers' } ]),
+    	new CopyWebpackPlugin([ { from: path.join(cesiumSource, cesiumWorkers), to: 'Workers' } ]),
     	new CopyWebpackPlugin([ { from: path.join(cesiumSource, 'Assets'), to: 'Assets' } ]),
     	new CopyWebpackPlugin([ { from: path.join(cesiumSource, 'Widgets'), to: 'Widgets' } ])
     ],

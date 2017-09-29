@@ -5,7 +5,6 @@ The minimal recommended setup for an application using [Cesium](https://cesiumjs
 ### Running this example app
 
 	npm install
-	npm run build-workers
 	npm start
 
 ### Requiring Cesium in your application
